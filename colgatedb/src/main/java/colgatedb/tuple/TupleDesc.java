@@ -1,7 +1,7 @@
 package colgatedb.tuple;
 
 import java.io.Serializable;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -51,6 +51,8 @@ public class TupleDesc implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private ArrayList<TDItem> TDArrayList;
+
     /**
      * Create a new TupleDesc with typeAr.length fields of the
      * specified types and with associated names.
@@ -61,7 +63,11 @@ public class TupleDesc implements Serializable {
      *                be null.
      */
     public TupleDesc(Type[] typeAr, String[] fieldAr) {
-        throw new UnsupportedOperationException("implement me!");
+        TDArrayList = new ArrayList<TDItem>();
+        for (int i = 0; i < typeAr.length; i++) {
+            TDItem item = new TDItem(typeAr[i], fieldAr[i]);
+            TDArrayList.add(item);
+        }
     }
 
     /**
@@ -73,14 +79,18 @@ public class TupleDesc implements Serializable {
      *               TupleDesc. It must contain at least one entry.
      */
     public TupleDesc(Type[] typeAr) {
-        throw new UnsupportedOperationException("implement me!");
+        TDArrayList = new ArrayList<TDItem>();
+        for (int i = 0; i < typeAr.length; i++) {
+            TDItem item = new TDItem(typeAr[i], "");
+            TDArrayList.add(item);
+        }
     }
 
     /**
      * @return the number of fields in this TupleDesc
      */
     public int numFields() {
-        throw new UnsupportedOperationException("implement me!");
+        return TDArrayList.size();
     }
 
     /**
@@ -92,7 +102,11 @@ public class TupleDesc implements Serializable {
      * @throws NoSuchElementException if i is not a valid field reference.
      */
     public Type getFieldType(int i) throws NoSuchElementException {
-        throw new UnsupportedOperationException("implement me!");
+        if (i < TDArrayList.size() && i >= -1) {
+            return TDArrayList.get(i).fieldType;
+        } else {
+            throw new NoSuchElementException();
+        }
     }
 
     /**
@@ -103,7 +117,11 @@ public class TupleDesc implements Serializable {
      * @throws NoSuchElementException if i is not a valid field reference.
      */
     public String getFieldName(int i) throws NoSuchElementException {
-        throw new UnsupportedOperationException("implement me!");
+        if (i < TDArrayList.size() && i >= 0) {
+            return TDArrayList.get(i).fieldName;
+        } else {
+            throw new NoSuchElementException();
+        }
     }
 
     /**
@@ -114,7 +132,14 @@ public class TupleDesc implements Serializable {
      * @throws NoSuchElementException if no field with a matching name is found.
      */
     public int fieldNameToIndex(String name) throws NoSuchElementException {
-        throw new UnsupportedOperationException("implement me!");
+        int i = 0;
+        for (TDItem item: TDArrayList) {
+            if (item.fieldName.equals(name)) {
+                return i;
+            }
+            i++;
+        }
+        throw new NoSuchElementException();
     }
 
     /**
@@ -125,7 +150,11 @@ public class TupleDesc implements Serializable {
      * @see Type#getLen()
      */
     public int getSize() {
-        throw new UnsupportedOperationException("implement me!");
+        int size = 0;
+        for (TDItem item: TDArrayList) {
+            size += item.fieldType.getLen();
+        }
+        return size;
     }
 
     /**
@@ -133,8 +162,7 @@ public class TupleDesc implements Serializable {
      * that are included in this TupleDesc
      */
     public Iterator<TDItem> iterator() {
-        // hint: use java.util.Arrays.asList to convert array into a list, then return list iterator.
-        throw new UnsupportedOperationException("implement me!");
+        return TDArrayList.iterator();
     }
 
     /**
@@ -146,7 +174,22 @@ public class TupleDesc implements Serializable {
      * @return true if the object is equal to this TupleDesc.
      */
     public boolean equals(Object o) {
-        throw new UnsupportedOperationException("implement me!");
+        TupleDesc TDObject;
+        if (o instanceof TupleDesc) {
+            TDObject = ((TupleDesc)o);
+        } else {
+            return false;
+        }
+
+        if (this.getSize() == TDObject.getSize()) {
+            for (int i = 0; i < TDArrayList.size(); i++) {
+                if (TDArrayList.get(i).fieldType != TDObject.TDArrayList.get(i).fieldType) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     public int hashCode() {
@@ -164,7 +207,12 @@ public class TupleDesc implements Serializable {
      * @return String describing this descriptor.
      */
     public String toString() {
-        throw new UnsupportedOperationException("implement me!");
+        String string = "";
+        for (TDItem item : TDArrayList) {
+            string += item.fieldType + "(" + item.fieldName + ")";
+        }
+        System.out.println(string);
+        return string;
     }
 
     /**
