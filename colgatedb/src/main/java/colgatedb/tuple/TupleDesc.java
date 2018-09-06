@@ -208,10 +208,15 @@ public class TupleDesc implements Serializable {
      */
     public String toString() {
         String string = "";
+        int count = 1;
+        int length = TDArrayList.size();
         for (TDItem item : TDArrayList) {
-            string += item.fieldType + "(" + item.fieldName + ")";
+            string += item.fieldName + "(" + item.fieldType + ")";
+            if (count < length) {
+                string += ", ";
+            }
+            count++;
         }
-        System.out.println(string);
         return string;
     }
 
@@ -224,7 +229,7 @@ public class TupleDesc implements Serializable {
      * @return the new TupleDesc
      */
     public static TupleDesc merge(TupleDesc td1, TupleDesc td2) {
-        throw new UnsupportedOperationException("implement me!");
+        throw new UnsupportedOperationException("unimplemented");
     }
 
 
