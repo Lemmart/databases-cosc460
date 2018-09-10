@@ -2,10 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1387526d-818b-4144-bf13-c5bbbc6682ed" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/out/production/main/colgatedb/tuple/Tuple.class" afterPath="$PROJECT_DIR$/out/production/main/colgatedb/tuple/Tuple.class" />
       <change beforePath="$PROJECT_DIR$/out/production/main/colgatedb/tuple/TupleDesc.class" afterPath="$PROJECT_DIR$/out/production/main/colgatedb/tuple/TupleDesc.class" />
+      <change beforePath="$PROJECT_DIR$/out/test/test/colgatedb/TupleTest.class" afterPath="$PROJECT_DIR$/out/test/test/colgatedb/TupleTest.class" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/colgatedb/.idea/workspace.xml" afterPath="$PROJECT_DIR$/src/main/java/colgatedb/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/colgatedb/tuple/Tuple.java" afterPath="$PROJECT_DIR$/src/main/java/colgatedb/tuple/Tuple.java" />
       <change beforePath="$PROJECT_DIR$/src/main/java/colgatedb/tuple/TupleDesc.java" afterPath="$PROJECT_DIR$/src/main/java/colgatedb/tuple/TupleDesc.java" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/colgatedb/TupleTest.java" afterPath="$PROJECT_DIR$/src/test/java/colgatedb/TupleTest.java" />
       <change beforePath="$PROJECT_DIR$/../../theory_of_computing-cosc304/lab1/ABCLab1.hs" afterPath="" />
       <change beforePath="$PROJECT_DIR$/../../theory_of_computing-cosc304/lab1/ABCLab1Test.hs" afterPath="" />
     </list>
@@ -22,7 +26,7 @@
       <file leaf-file-name="Field.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/colgatedb/tuple/Field.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
+            <state relative-caret-position="0">
               <caret line="21" column="17" lean-forward="false" selection-start-line="21" selection-start-column="17" selection-end-line="21" selection-end-column="17" />
               <folding />
             </state>
@@ -82,38 +86,39 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Tuple.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Tuple.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/colgatedb/tuple/Tuple.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="930">
-              <caret line="73" column="30" lean-forward="false" selection-start-line="73" selection-start-column="30" selection-end-line="73" selection-end-column="30" />
+            <state relative-caret-position="262">
+              <caret line="110" column="22" lean-forward="true" selection-start-line="110" selection-start-column="22" selection-end-line="110" selection-end-column="22" />
               <folding>
-                <element signature="e#2544#2545#0" expanded="true" />
+                <element signature="e#1534#1535#0" expanded="true" />
+                <element signature="e#1565#1566#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TupleDesc.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="TupleDesc.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/colgatedb/tuple/TupleDesc.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="199">
-              <caret line="231" column="65" lean-forward="false" selection-start-line="231" selection-start-column="65" selection-end-line="231" selection-end-column="65" />
+            <state relative-caret-position="138">
+              <caret line="48" column="9" lean-forward="true" selection-start-line="48" selection-start-column="9" selection-end-line="48" selection-end-column="9" />
               <folding>
                 <element signature="e#2779#2780#0" expanded="true" />
                 <element signature="e#2820#2821#0" expanded="true" />
-                <element signature="e#5061#5062#0" expanded="true" />
-                <element signature="e#5106#5107#0" expanded="true" />
+                <element signature="e#5119#5120#0" expanded="true" />
+                <element signature="e#5164#5165#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TupleDescTest.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/java/colgatedb/TupleDescTest.java">
+      <file leaf-file-name="TupleTest.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/test/java/colgatedb/TupleTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="147">
-              <caret line="221" column="67" lean-forward="true" selection-start-line="221" selection-start-column="67" selection-end-line="221" selection-end-column="67" />
+            <state relative-caret-position="187">
+              <caret line="112" column="0" lean-forward="false" selection-start-line="112" selection-start-column="0" selection-end-line="112" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -122,7 +127,7 @@
       <file leaf-file-name="Type.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/colgatedb/tuple/Type.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="540">
+            <state relative-caret-position="394">
               <caret line="41" column="17" lean-forward="false" selection-start-line="41" selection-start-column="17" selection-end-line="41" selection-end-column="17" />
               <folding />
             </state>
@@ -135,6 +140,7 @@
     <findStrings>
       <find>enum</find>
       <find>tostring</find>
+      <find>getfield(4)</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -150,6 +156,8 @@
       <list>
         <option value="$PROJECT_DIR$/src/main/java/colgatedb/tuple/Type.java" />
         <option value="$PROJECT_DIR$/src/main/java/colgatedb/tuple/TupleDesc.java" />
+        <option value="$PROJECT_DIR$/src/test/java/colgatedb/TupleTest.java" />
+        <option value="$PROJECT_DIR$/src/main/java/colgatedb/tuple/Tuple.java" />
       </list>
     </option>
   </component>
@@ -377,44 +385,44 @@
       <updated>1536083589783</updated>
       <workItem from="1536083593265" duration="5165000" />
       <workItem from="1536259706390" duration="524000" />
-      <workItem from="1536260807562" duration="1666000" />
+      <workItem from="1536260807562" duration="22997000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="All_in_test - 2018.09.04 at 15h 17m 30s.xml">
+    <history-entry file="All_in_test - 2018.09.09 at 19h 25m 40s.xml">
       <configuration name="All in test" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="All_in_test - 2018.09.04 at 15h 17m 39s.xml">
+    <history-entry file="All_in_test - 2018.09.09 at 19h 25m 51s.xml">
       <configuration name="All in test" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="All_in_test - 2018.09.06 at 15h 18m 10s.xml">
+    <history-entry file="All_in_test - 2018.09.09 at 19h 50m 26s.xml">
       <configuration name="All in test" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="All_in_test - 2018.09.06 at 15h 18m 59s.xml">
+    <history-entry file="All_in_test - 2018.09.09 at 19h 52m 44s.xml">
       <configuration name="All in test" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="All_in_test - 2018.09.06 at 15h 24m 56s.xml">
+    <history-entry file="All_in_test - 2018.09.09 at 19h 54m 52s.xml">
       <configuration name="All in test" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="All_in_test - 2018.09.06 at 15h 25m 27s.xml">
+    <history-entry file="All_in_test - 2018.09.09 at 19h 56m 27s.xml">
       <configuration name="All in test" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="All_in_test - 2018.09.06 at 15h 30m 12s.xml">
+    <history-entry file="All_in_test - 2018.09.09 at 20h 03m 48s.xml">
       <configuration name="All in test" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="All_in_test - 2018.09.06 at 15h 30m 41s.xml">
+    <history-entry file="All_in_test - 2018.09.09 at 20h 04m 02s.xml">
       <configuration name="All in test" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="All_in_test - 2018.09.06 at 15h 32m 38s.xml">
+    <history-entry file="All_in_test - 2018.09.09 at 20h 05m 15s.xml">
       <configuration name="All in test" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="All_in_test - 2018.09.06 at 15h 34m 01s.xml">
+    <history-entry file="All_in_test - 2018.09.09 at 20h 07m 12s.xml">
       <configuration name="All in test" configurationId="JUnit" />
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="7355000" />
+    <option name="totallyTimeSpent" value="28686000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -431,13 +439,13 @@
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32909605" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32909605" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33474576" sideWeight="0.5028612" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.41949153" sideWeight="0.49713877" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3361582" sideWeight="0.49713877" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32909605" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -530,7 +538,8 @@
         <state relative-caret-position="930">
           <caret line="73" column="30" lean-forward="false" selection-start-line="73" selection-start-column="30" selection-end-line="73" selection-end-column="30" />
           <folding>
-            <element signature="e#2544#2545#0" expanded="true" />
+            <element signature="e#1534#1535#0" expanded="true" />
+            <element signature="e#1565#1566#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -558,8 +567,8 @@
           <folding>
             <element signature="e#2779#2780#0" expanded="true" />
             <element signature="e#2820#2821#0" expanded="true" />
-            <element signature="e#5061#5062#0" expanded="true" />
-            <element signature="e#5106#5107#0" expanded="true" />
+            <element signature="e#5119#5120#0" expanded="true" />
+            <element signature="e#5164#5165#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -601,7 +610,8 @@
         <state relative-caret-position="930">
           <caret line="73" column="30" lean-forward="false" selection-start-line="73" selection-start-column="30" selection-end-line="73" selection-end-column="30" />
           <folding>
-            <element signature="e#2544#2545#0" expanded="true" />
+            <element signature="e#1534#1535#0" expanded="true" />
+            <element signature="e#1565#1566#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -613,8 +623,8 @@
           <folding>
             <element signature="e#2779#2780#0" expanded="true" />
             <element signature="e#2820#2821#0" expanded="true" />
-            <element signature="e#5061#5062#0" expanded="true" />
-            <element signature="e#5106#5107#0" expanded="true" />
+            <element signature="e#5119#5120#0" expanded="true" />
+            <element signature="e#5164#5165#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -644,7 +654,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/colgatedb/tuple/Field.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
+        <state relative-caret-position="0">
           <caret line="21" column="17" lean-forward="false" selection-start-line="21" selection-start-column="17" selection-end-line="21" selection-end-column="17" />
           <folding />
         </state>
@@ -674,24 +684,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/colgatedb/tuple/Tuple.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="930">
-          <caret line="73" column="30" lean-forward="false" selection-start-line="73" selection-start-column="30" selection-end-line="73" selection-end-column="30" />
-          <folding>
-            <element signature="e#2544#2545#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/colgatedb/tuple/Type.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="540">
-          <caret line="41" column="17" lean-forward="false" selection-start-line="41" selection-start-column="17" selection-end-line="41" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/colgatedb/tuple/IntField.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
@@ -713,23 +705,74 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/colgatedb/TestUtility.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="159">
+          <caret line="26" column="7" lean-forward="true" selection-start-line="26" selection-start-column="7" selection-end-line="26" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/gradescope/jh61b/grader/GradedTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-11">
+          <caret line="34" column="18" lean-forward="false" selection-start-line="34" selection-start-column="18" selection-end-line="34" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/test/java/colgatedb/TupleDescTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="147">
-          <caret line="221" column="67" lean-forward="true" selection-start-line="221" selection-start-column="67" selection-end-line="221" selection-end-column="67" />
+        <state relative-caret-position="116">
+          <caret line="102" column="9" lean-forward="false" selection-start-line="102" selection-start-column="9" selection-end-line="102" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/colgatedb/tuple/Type.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="394">
+          <caret line="41" column="17" lean-forward="false" selection-start-line="41" selection-start-column="17" selection-end-line="41" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/lib/junit-4.12.jar!/org/junit/Assert.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3536">
+          <caret line="371" column="0" lean-forward="false" selection-start-line="371" selection-start-column="0" selection-end-line="371" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/colgatedb/tuple/TupleDesc.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="199">
-          <caret line="231" column="65" lean-forward="false" selection-start-line="231" selection-start-column="65" selection-end-line="231" selection-end-column="65" />
+        <state relative-caret-position="138">
+          <caret line="48" column="9" lean-forward="true" selection-start-line="48" selection-start-column="9" selection-end-line="48" selection-end-column="9" />
           <folding>
             <element signature="e#2779#2780#0" expanded="true" />
             <element signature="e#2820#2821#0" expanded="true" />
-            <element signature="e#5061#5062#0" expanded="true" />
-            <element signature="e#5106#5107#0" expanded="true" />
+            <element signature="e#5119#5120#0" expanded="true" />
+            <element signature="e#5164#5165#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/colgatedb/TupleTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="112" column="0" lean-forward="false" selection-start-line="112" selection-start-column="0" selection-end-line="112" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/colgatedb/tuple/Tuple.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="262">
+          <caret line="110" column="22" lean-forward="true" selection-start-line="110" selection-start-column="22" selection-end-line="110" selection-end-column="22" />
+          <folding>
+            <element signature="e#1534#1535#0" expanded="true" />
+            <element signature="e#1565#1566#0" expanded="true" />
           </folding>
         </state>
       </provider>

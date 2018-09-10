@@ -132,14 +132,13 @@ public class TupleDesc implements Serializable {
      * @throws NoSuchElementException if no field with a matching name is found.
      */
     public int fieldNameToIndex(String name) throws NoSuchElementException {
-        int i = 0;
-        for (TDItem item: TDArrayList) {
-            if (item.fieldName.equals(name)) {
+        for (int i = 0; i < TDArrayList.size(); i++) {
+            String fieldName = TDArrayList.get(i).fieldName;
+            if (fieldName != null && fieldName.equals(name)){
                 return i;
             }
-            i++;
         }
-        throw new NoSuchElementException();
+        throw new NoSuchElementException(name);
     }
 
     /**
@@ -229,7 +228,13 @@ public class TupleDesc implements Serializable {
      * @return the new TupleDesc
      */
     public static TupleDesc merge(TupleDesc td1, TupleDesc td2) {
-        throw new UnsupportedOperationException("unimplemented");
+        Type[] types = new Type[1];
+        types[0] = Type.INT_TYPE;                      // build placeholder element
+        TupleDesc TDNew = new TupleDesc(types);
+        TDNew.TDArrayList.addAll(td1.TDArrayList);
+        TDNew.TDArrayList.addAll(td2.TDArrayList);
+        TDNew.TDArrayList.remove(0);            // remove placeholder element
+        return TDNew;
     }
 
 

@@ -107,8 +107,10 @@ public class TupleTest {
         tup.setField(0, new IntField(170));
         tup.setField(1, new IntField(99));
         tup.setField(2, new StringField("blah"));
+
         String tupStr = tup.toString();
         String expected = "170\t99\tblah";
+
         assertEquals(expected.length(), tupStr.length());  // should not end with a "\t"
         assertEquals(expected, tupStr);
     }
