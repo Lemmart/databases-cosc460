@@ -107,7 +107,6 @@ public class Tuple implements Serializable {
             }
             i++;
         }
-        string += "\n";
         return string;
     }
 

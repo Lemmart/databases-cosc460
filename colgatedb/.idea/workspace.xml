@@ -2,14 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1387526d-818b-4144-bf13-c5bbbc6682ed" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/out/production/main/colgatedb/tuple/Tuple.class" afterPath="$PROJECT_DIR$/out/production/main/colgatedb/tuple/Tuple.class" />
-      <change beforePath="$PROJECT_DIR$/out/production/main/colgatedb/tuple/TupleDesc.class" afterPath="$PROJECT_DIR$/out/production/main/colgatedb/tuple/TupleDesc.class" />
-      <change beforePath="$PROJECT_DIR$/out/test/test/colgatedb/TupleTest.class" afterPath="$PROJECT_DIR$/out/test/test/colgatedb/TupleTest.class" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/colgatedb/.idea/workspace.xml" afterPath="$PROJECT_DIR$/src/main/java/colgatedb/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/src/main/java/colgatedb/tuple/Tuple.java" afterPath="$PROJECT_DIR$/src/main/java/colgatedb/tuple/Tuple.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/colgatedb/tuple/TupleDesc.java" afterPath="$PROJECT_DIR$/src/main/java/colgatedb/tuple/TupleDesc.java" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/colgatedb/TupleTest.java" afterPath="$PROJECT_DIR$/src/test/java/colgatedb/TupleTest.java" />
       <change beforePath="$PROJECT_DIR$/../../theory_of_computing-cosc304/lab1/ABCLab1.hs" afterPath="" />
       <change beforePath="$PROJECT_DIR$/../../theory_of_computing-cosc304/lab1/ABCLab1Test.hs" afterPath="" />
     </list>
@@ -89,8 +82,8 @@
       <file leaf-file-name="Tuple.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/colgatedb/tuple/Tuple.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="262">
-              <caret line="110" column="22" lean-forward="true" selection-start-line="110" selection-start-column="22" selection-end-line="110" selection-end-column="22" />
+            <state relative-caret-position="247">
+              <caret line="109" column="22" lean-forward="true" selection-start-line="109" selection-start-column="22" selection-end-line="109" selection-end-column="22" />
               <folding>
                 <element signature="e#1534#1535#0" expanded="true" />
                 <element signature="e#1565#1566#0" expanded="true" />
@@ -385,14 +378,11 @@
       <updated>1536083589783</updated>
       <workItem from="1536083593265" duration="5165000" />
       <workItem from="1536259706390" duration="524000" />
-      <workItem from="1536260807562" duration="22997000" />
+      <workItem from="1536260807562" duration="23601000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="All_in_test - 2018.09.09 at 19h 25m 40s.xml">
-      <configuration name="All in test" configurationId="JUnit" />
-    </history-entry>
     <history-entry file="All_in_test - 2018.09.09 at 19h 25m 51s.xml">
       <configuration name="All in test" configurationId="JUnit" />
     </history-entry>
@@ -420,9 +410,12 @@
     <history-entry file="All_in_test - 2018.09.09 at 20h 07m 12s.xml">
       <configuration name="All in test" configurationId="JUnit" />
     </history-entry>
+    <history-entry file="All_in_test - 2018.09.09 at 21h 45m 25s.xml">
+      <configuration name="All in test" configurationId="JUnit" />
+    </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="28686000" />
+    <option name="totallyTimeSpent" value="29290000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -768,8 +761,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/colgatedb/tuple/Tuple.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="262">
-          <caret line="110" column="22" lean-forward="true" selection-start-line="110" selection-start-column="22" selection-end-line="110" selection-end-column="22" />
+        <state relative-caret-position="247">
+          <caret line="109" column="22" lean-forward="true" selection-start-line="109" selection-start-column="22" selection-end-line="109" selection-end-column="22" />
           <folding>
             <element signature="e#1534#1535#0" expanded="true" />
             <element signature="e#1565#1566#0" expanded="true" />
