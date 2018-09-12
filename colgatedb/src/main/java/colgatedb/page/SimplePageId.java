@@ -15,11 +15,16 @@ package colgatedb.page;
  * grateful for Sam's permission to use and adapt his materials.
  */
 
+import java.security.MessageDigest;
+import java.security.MessageDigestSpi;
+
 /**
  * A simple identifier for page objects.
  */
 public class SimplePageId implements PageId {
 
+    private int tableId;
+    private int pgNo;
 
     /**
      * Constructor. Create a page id structure for a specific page of a
@@ -29,14 +34,15 @@ public class SimplePageId implements PageId {
      * @param pgNo    The page number in that table.
      */
     public SimplePageId(int tableId, int pgNo) {
-        throw new UnsupportedOperationException("implement me!");
+        this.tableId = tableId;
+        this.pgNo = pgNo;
     }
 
     /**
      * @return the table associated with this PageId
      */
     public int getTableId() {
-        throw new UnsupportedOperationException("implement me!");
+        return tableId;
     }
 
     /**
@@ -44,8 +50,9 @@ public class SimplePageId implements PageId {
      * this PageId
      */
     public int pageNumber() {
-        throw new UnsupportedOperationException("implement me!");
+        return pgNo;
     }
+
 
     /**
      * @return a hash code for this page, represented by the combination of
@@ -56,7 +63,9 @@ public class SimplePageId implements PageId {
      * in a principled way!
      */
     public int hashCode() {
-        throw new UnsupportedOperationException("implement me!");
+        String code = Integer.toString(tableId) + Integer.toString(pgNo);
+        int hcode = code.hashCode();
+        return hcode;
     }
 
     /**
@@ -67,14 +76,24 @@ public class SimplePageId implements PageId {
      * ids are the same)
      */
     public boolean equals(Object o) {
-        throw new UnsupportedOperationException("implement me!");
+        SimplePageId simpleObject;
+        if (o instanceof SimplePageId) {
+            simpleObject = ((SimplePageId)o);
+            if (simpleObject.getTableId() == tableId && simpleObject.pageNumber() == pgNo) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
     /**
      * @return Returns a string that is "x-y" where x is the tableId and y is the page number.
      */
     public String toString() {
-        throw new UnsupportedOperationException("implement me!");
+        return tableId + "-" + pgNo;
     }
 
     /**

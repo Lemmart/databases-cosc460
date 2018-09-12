@@ -196,7 +196,7 @@ public class TupleDesc implements Serializable {
         // that equal objects have equals hashCode() results.  If you're not
         // sure yet (you may not be), then leave the UnsupportedOperationException
         // so that if this method ever gets called, it will trigger an exception.
-        throw new UnsupportedOperationException("unimplemented");
+        return TDArrayList.hashCode();
     }
 
     /**

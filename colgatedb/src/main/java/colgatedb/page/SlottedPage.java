@@ -4,6 +4,8 @@ import colgatedb.tuple.RecordId;
 import colgatedb.tuple.Tuple;
 import colgatedb.tuple.TupleDesc;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -33,9 +35,8 @@ public class SlottedPage implements Page {
     private final PageId pid;
     private final TupleDesc td;
     private final int pageSize;
-    // you will want to include additional instance variables here.
+    private ArrayList<Tuple> tupleArrayList;
 
-    // ------------------------------------------------
     // oldData fields:
     // these are used for logging and recovery -- you can ignore for now
     private final Byte oldDataLock = (byte) 0;
@@ -52,7 +53,12 @@ public class SlottedPage implements Page {
         this.pid = pid;
         this.td = td;
         this.pageSize = pageSize;
-         // write some code here to finish initializing this object
+
+        tupleArrayList = new ArrayList<>();
+        for (int i = 0; i < pageSize; i++) {
+            tupleArrayList.add(null);
+        }
+
         setBeforeImage();  // used for logging, leave this line at end of constructor
     }
 
@@ -71,7 +77,7 @@ public class SlottedPage implements Page {
 
     @Override
     public PageId getId() {
-        throw new UnsupportedOperationException("implement me!");
+        return pid;
     }
 
     /**
@@ -79,7 +85,10 @@ public class SlottedPage implements Page {
      * @return true if this slot is used (i.e., is occupied by a Tuple).
      */
     public boolean isSlotUsed(int slotno) {
-        throw new UnsupportedOperationException("implement me!");
+        if (slotno < tupleArrayList.size() && tupleArrayList.get(slotno) != null) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -103,7 +112,13 @@ public class SlottedPage implements Page {
      * @return the number of slots on this page that are empty.
      */
     public int getNumEmptySlots() {
-        throw new UnsupportedOperationException("implement me!");
+        int numEmpty = 0;
+        for (Tuple tup: tupleArrayList) {
+            if (tup == null) {
+                numEmpty++;
+            }
+        }
+        return numEmpty;
     }
 
     /**
@@ -112,7 +127,13 @@ public class SlottedPage implements Page {
      * @throws PageException if slot is empty
      */
     public Tuple getTuple(int slotno) {
-        throw new UnsupportedOperationException("implement me!");
+        if (slotno < tupleArrayList.size()) {
+            throw new NoSuchElementException();
+        } else if (tupleArrayList.get(slotno).equals(null)){
+            throw new PageException("PLEASE FIX ME");
+        } else {
+            return tupleArrayList.get(slotno);
+        }
     }
 
     /**
@@ -127,6 +148,14 @@ public class SlottedPage implements Page {
      *                          passed tuple is a mismatch with TupleDesc of this page.
      */
     public void insertTuple(int slotno, Tuple t) {
+        if (slotno >= tupleArrayList.size() || !tupleArrayList.get(slotno).equals(null) || !t.getTupleDesc().equals(td)) {
+            throw new PageException("[Error] Failed to insert tuple " + t.toString() + " at index " + slotno);
+        }
+        /*
+        RecordId rid = new RecordId(pageSize, );
+        t.setRecordId(rid);
+        tupleArrayList.set(slotno, t);
+        */
         throw new UnsupportedOperationException("implement me!");
     }
 
@@ -141,6 +170,11 @@ public class SlottedPage implements Page {
      *                          passed tuple is a mismatch with TupleDesc of this page.
      */
     public void insertTuple(Tuple t) throws PageException {
+        /*
+        if (!t.getTupleDesc().equals(td)) {
+            throw new PageException("[Error] Failed to insert tuple " + t.toString() + " at index " + slotno);
+        }
+        */
         throw new UnsupportedOperationException("implement me!");
     }
 

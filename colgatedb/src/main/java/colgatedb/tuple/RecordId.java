@@ -1,5 +1,6 @@
 package colgatedb.tuple;
 
+import colgatedb.page.PageException;
 import colgatedb.page.PageId;
 
 import java.io.Serializable;
@@ -24,6 +25,9 @@ public class RecordId implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private PageId pid;
+    private int tupleno;
+
     /**
      * Creates a new RecordId referring to the specified PageId and tuple
      * number.
@@ -34,24 +38,22 @@ public class RecordId implements Serializable {
      *            the tuple number within the page.
      */
     public RecordId(PageId pid, int tupleno) {
-         // you do not need to implement for lab 1
-        throw new UnsupportedOperationException("implement me!");
+        this.pid = pid;
+        this.tupleno = tupleno;
     }
 
     /**
      * @return the tuple number this RecordId references.
      */
     public int tupleno() {
-         // you do not need to implement for lab 1
-        throw new UnsupportedOperationException("implement me!");
+        return tupleno;
     }
 
     /**
      * @return the page id this RecordId references.
      */
     public PageId getPageId() {
-         // you do not need to implement for lab 1
-        throw new UnsupportedOperationException("implement me!");
+        return pid;
     }
 
     /**
@@ -62,8 +64,11 @@ public class RecordId implements Serializable {
      */
     @Override
     public boolean equals(Object o) {
-         // you do not need to implement for lab 1
-        throw new UnsupportedOperationException("implement me!");
+        if (o instanceof RecordId) {
+            RecordId recordObject = ((RecordId)o);
+            return recordObject.tupleno() == tupleno && recordObject.getPageId().equals(pid);
+        }
+        return false;
     }
 
     /**
@@ -77,9 +82,9 @@ public class RecordId implements Serializable {
      */
     @Override
     public int hashCode() {
-         // you do not need to implement for lab 1
-        throw new UnsupportedOperationException("implement me!");
-
+        String code = Integer.toString(pid.hashCode()) + Integer.toString(tupleno);
+        int hcode = code.hashCode();
+        return hcode;
     }
 
 }
