@@ -4,7 +4,6 @@ import colgatedb.tuple.RecordId;
 import colgatedb.tuple.Tuple;
 import colgatedb.tuple.TupleDesc;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -127,10 +126,8 @@ public class SlottedPage implements Page {
      * @throws PageException if slot is empty
      */
     public Tuple getTuple(int slotno) {
-        if (slotno < tupleArrayList.size()) {
+        if (slotno >= tupleArrayList.size() || tupleArrayList.get(slotno) == null) {
             throw new NoSuchElementException();
-        } else if (tupleArrayList.get(slotno).equals(null)){
-            throw new PageException("PLEASE FIX ME");
         } else {
             return tupleArrayList.get(slotno);
         }
@@ -148,15 +145,12 @@ public class SlottedPage implements Page {
      *                          passed tuple is a mismatch with TupleDesc of this page.
      */
     public void insertTuple(int slotno, Tuple t) {
-        if (slotno >= tupleArrayList.size() || !tupleArrayList.get(slotno).equals(null) || !t.getTupleDesc().equals(td)) {
+        if (tupleArrayList.get(slotno) != null || !td.equals(t.getTupleDesc())) {
             throw new PageException("[Error] Failed to insert tuple " + t.toString() + " at index " + slotno);
         }
-        /*
-        RecordId rid = new RecordId(pageSize, );
+        RecordId rid = new RecordId(pid, slotno);
         t.setRecordId(rid);
         tupleArrayList.set(slotno, t);
-        */
-        throw new UnsupportedOperationException("implement me!");
     }
 
     /**
@@ -170,12 +164,19 @@ public class SlottedPage implements Page {
      *                          passed tuple is a mismatch with TupleDesc of this page.
      */
     public void insertTuple(Tuple t) throws PageException {
-        /*
-        if (!t.getTupleDesc().equals(td)) {
-            throw new PageException("[Error] Failed to insert tuple " + t.toString() + " at index " + slotno);
+        int slotno = -1;
+        for (int i = 0; i < tupleArrayList.size(); i++) {
+            if (tupleArrayList.get(i) == null) {
+                slotno = i;
+                break;
+            }
         }
-        */
-        throw new UnsupportedOperationException("implement me!");
+        if (slotno == -1 || !td.equals(t.getTupleDesc())) {
+            throw new PageException("[Error] Failed to insert tuple " + t.toString());
+        }
+        RecordId rid = new RecordId(pid, slotno);
+        t.setRecordId(rid);
+        tupleArrayList.set(slotno, t);
     }
 
     /**
@@ -187,7 +188,23 @@ public class SlottedPage implements Page {
      *                          slot is already empty.
      */
     public void deleteTuple(Tuple t) throws PageException {
-        throw new UnsupportedOperationException("implement me!");
+        boolean isValid = true;
+
+        RecordId rid = t.getRecordId();
+        if (rid != null) {
+            if (this.pid == rid.getPageId() && tupleArrayList.get(rid.tupleno()) != null) {
+                tupleArrayList.set(rid.tupleno(), null);
+                t.setRecordId(null);
+            } else {
+                isValid = false;
+            }
+        } else {
+            isValid = false;
+        }
+
+        if (!isValid) {
+            throw new PageException("[Error] Failed to delete tuple " + t.toString());
+        }
     }
 
 
@@ -198,8 +215,39 @@ public class SlottedPage implements Page {
      * (Note: calling remove on this iterator throws an UnsupportedOperationException)
      */
     public Iterator<Tuple> iterator() {
-        throw new UnsupportedOperationException("implement me!");
+        Iterator<Tuple> instance = new tupleIterator();
+        return instance;
     }
+
+    class tupleIterator implements Iterator<Tuple> {
+
+        private int currIdx;
+
+        public tupleIterator() { currIdx = 0; }
+
+        @Override
+        public boolean hasNext() {
+            return currIdx < tupleArrayList.size();
+        }
+
+        @Override
+        public Tuple next() {
+            if (!hasNext()) {   // always check!
+                throw new NoSuchElementException();
+            }
+            Tuple nextValue = tupleArrayList.get(currIdx);
+            currIdx++;
+            return nextValue;
+        }
+
+        @Override
+        public void remove() {
+            // it's not uncommon for a class to implement the Iterator interface
+            // yet not support remove.
+            throw new UnsupportedOperationException("my data can't be modified!");
+        }
+    }
+
 
     @Override
     public byte[] getPageData() {
