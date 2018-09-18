@@ -4,6 +4,7 @@ import colgatedb.tuple.RecordId;
 import colgatedb.tuple.Tuple;
 import colgatedb.tuple.TupleDesc;
 
+import javax.swing.plaf.synth.SynthTextAreaUI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -227,7 +228,14 @@ public class SlottedPage implements Page {
 
         @Override
         public boolean hasNext() {
-            return currIdx < tupleArrayList.size();
+            if (currIdx >= tupleArrayList.size()) {
+                return false;
+            } else if (tupleArrayList.get(currIdx) == null) {
+                currIdx++;
+                return this.hasNext();
+            } else {
+                return true;
+            }
         }
 
         @Override
