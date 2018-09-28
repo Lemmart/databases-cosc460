@@ -202,13 +202,23 @@ public class SlottedPageFormatter {
     private static void readPayload(ArrayList<Integer> header, DataInputStream dis, SlottedPage emptyPage, TupleDesc td) {
         int numSlots = emptyPage.getNumSlots();
         int headerSize = getHeaderSize(numSlots); // number of bits in headerByteArr
+        int tupSize = td.getSize();
+
         try {
             for (int i = 0; i < headerSize*8; i++) {
+                boolean isTup = header.get(i)==1;
+//
                 throw new UnsupportedOperationException("FIX THE READING OF TUPLES!");
-//                if (header.get(i) == 1) {
-////                    parse tuple
-//                } else {
-////                    load td fields as null
+//
+//                Tuple t = new Tuple(td);
+//                for (int j = 0; j < td.getSize(); j++) {
+//                    Field f;
+//                    if (isTup) {
+//                        f = Field.parse(dis.readByte());
+//                    } else {
+//                        f = new Field(null);
+//                    }
+//                    t.setField(j,f);
 //                }
             }
         } catch (Exception e) {
