@@ -85,7 +85,7 @@ public class SlottedPage implements Page {
      * @return true if this slot is used (i.e., is occupied by a Tuple).
      */
     public boolean isSlotUsed(int slotno) {
-        if (slotno < tupleArrayList.size() && tupleArrayList.get(slotno) != null) {
+        if (slotno > -1 && slotno < tupleArrayList.size() && tupleArrayList.get(slotno) != null) {
             return true;
         }
         return false;
@@ -105,7 +105,7 @@ public class SlottedPage implements Page {
      * the page size and the schema (TupleDesc).
      */
     public int getNumSlots() {
-         return 5;  // this will need to be revised later
+        return SlottedPageFormatter.computePageCapacity(pageSize, td);
     }
 
     /**
@@ -127,8 +127,8 @@ public class SlottedPage implements Page {
      * @throws PageException if slot is empty
      */
     public Tuple getTuple(int slotno) {
-        if (slotno >= tupleArrayList.size() || tupleArrayList.get(slotno) == null) {
-            throw new NoSuchElementException();
+        if (slotno < 0 || slotno >= tupleArrayList.size() || tupleArrayList.get(slotno) == null) {
+            throw new PageException("[ERROR] Failed to retrieve entry in slot " + slotno);
         } else {
             return tupleArrayList.get(slotno);
         }
@@ -146,7 +146,7 @@ public class SlottedPage implements Page {
      *                          passed tuple is a mismatch with TupleDesc of this page.
      */
     public void insertTuple(int slotno, Tuple t) {
-        if (tupleArrayList.get(slotno) != null || !td.equals(t.getTupleDesc())) {
+        if (slotno < 0 || slotno >= tupleArrayList.size() || tupleArrayList.get(slotno) != null || !td.equals(t.getTupleDesc())) {
             throw new PageException("[Error] Failed to insert tuple " + t.toString() + " at index " + slotno);
         }
         RecordId rid = new RecordId(pid, slotno);
@@ -175,9 +175,7 @@ public class SlottedPage implements Page {
         if (slotno == -1 || !td.equals(t.getTupleDesc())) {
             throw new PageException("[Error] Failed to insert tuple " + t.toString());
         }
-        RecordId rid = new RecordId(pid, slotno);
-        t.setRecordId(rid);
-        tupleArrayList.set(slotno, t);
+        insertTuple(slotno, t);
     }
 
     /**
@@ -259,7 +257,7 @@ public class SlottedPage implements Page {
 
     @Override
     public byte[] getPageData() {
-         return new byte[1];  // this will need to be fixed later
+        return SlottedPageFormatter.pageToBytes(this, td, pageSize);
     }
 
     /**
@@ -267,7 +265,7 @@ public class SlottedPage implements Page {
      * @param data
      */
     private void setPageData(byte[] data) {
-         // this will be filled in later...
+         SlottedPageFormatter.bytesToPage(data, this,td);
     }
 
     @Override

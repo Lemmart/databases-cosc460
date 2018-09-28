@@ -4,7 +4,9 @@ import colgatedb.tuple.Field;
 import colgatedb.tuple.Tuple;
 import colgatedb.tuple.TupleDesc;
 
+import javax.swing.plaf.synth.SynthTextAreaUI;
 import java.io.*;
+import java.util.*;
 
 /**
  * ColgateDB
@@ -65,7 +67,8 @@ public class SlottedPageFormatter {
      * @return number of tuples that this page can hold
      */
     public static int computePageCapacity(int pageSize, TupleDesc td) {
-        throw new UnsupportedOperationException("implement me!");
+        int capacity = (int)Math.floor((pageSize * 8) / (td.getSize() * 8 + 1));
+        return capacity;
     }
 
     /**
@@ -76,7 +79,7 @@ public class SlottedPageFormatter {
      * @return the size of the header in bytes.
      */
     public static int getHeaderSize(int numSlots) {
-        throw new UnsupportedOperationException("implement me!");
+        return (int) Math.ceil(numSlots / 8.0);
     }
 
     /**
@@ -87,15 +90,55 @@ public class SlottedPageFormatter {
      * @return
      */
     public static byte[] pageToBytes(SlottedPage page, TupleDesc td, int pageSize) {
-        try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream(pageSize);
             DataOutputStream dos = new DataOutputStream(baos);
+
+            writeHeader(dos, page);
+            writePayload(dos, page, td, pageSize);
+
             // write out the page data to the DataOutputStream dos, starting with the header then the tuples
             // see the Javadocs for DataOutputStream for handy methods
             // to write out the data of a Field use the Field.serialize method
             // also, you may find it the markSlot method very useful here
-            
+
             return baos.toByteArray();
+    }
+
+    private static void writeHeader(DataOutputStream dos, SlottedPage page) {
+        int numSlots = page.getNumSlots();
+        int headerSize = getHeaderSize(numSlots); // number of bytes in header
+
+        byte[] headerBytes = new byte[headerSize];
+
+        for (int i = 0; i < headerSize*8; i++) {
+            int byteIdx = i/8;
+            if (page.isSlotUsed(i)) {
+                byte b = (byte)(Math.pow(2,(double)(i%8)));
+                headerBytes[byteIdx] = (byte)(headerBytes[byteIdx] | b);
+            }
+        }
+        try {
+            dos.write(headerBytes);
+        } catch (Exception e) {
+            throw new PageException(e);
+        }
+    }
+
+    private static void writePayload(DataOutputStream dos, SlottedPage page, TupleDesc td, int pageSize) {
+        int pageCapacity = computePageCapacity(pageSize, td);
+        try {
+            for (int i = 0; i < pageCapacity; i++) {
+                if (page.isSlotUsed(i)) {
+                    Iterator<Field> fIterator = page.getTuple(i).fields();
+                    while (fIterator.hasNext()) {
+                        fIterator.next().serialize(dos);
+                    }
+                } else {
+                    int tupSize = td.getSize();
+                    byte[] emptyTups = new byte[tupSize];
+                    dos.write(emptyTups);
+                }
+            }
         } catch (Exception e) {
             throw new PageException(e);
         }
@@ -112,6 +155,10 @@ public class SlottedPageFormatter {
 
         try {
             DataInputStream dis = new DataInputStream(new ByteArrayInputStream(bytes));
+
+            ArrayList<Integer> header = readHeader(dis, emptyPage);
+            readPayload(header, dis, emptyPage, td);
+
             // read in the data DataInputStream dis, first the header then the bytes of each tuple
             // see the Javadocs for DataInputStream for handy methods
             // to read the data associated with a Field in a tuple, use the Type.parse method
@@ -122,6 +169,52 @@ public class SlottedPageFormatter {
         }
     }
 
+    private static ArrayList<Integer> readHeader(DataInputStream dis, SlottedPage emptyPage) {
+        int numSlots = emptyPage.getNumSlots();
+        int headerSize = getHeaderSize(numSlots); // number of bytes in headerByteArr
+
+        ArrayList<Integer> headerSlotsInUse = new ArrayList<>();
+        for (int i = 0; i < headerSize*8; i++) {
+            headerSlotsInUse.add(0);
+        }
+
+        // Read bytes into array
+        byte[] headerByteArr = new byte[headerSize];
+        try {
+            for (int i = 0; i < headerSize; i++) {
+                headerByteArr[i] = dis.readByte();
+            }
+        } catch (Exception e) {
+            throw new PageException(e);
+        }
+
+        // read byte array to build record of header slots in use
+        for (int i = 0; i < headerSize*8; i++) {
+            if (isSlotUsed(i,headerByteArr)) {
+                headerSlotsInUse.add(i, 1);
+            }
+        }
+
+//        System.out.println("MY ARRAYLIST: " + headerSlotsInUse.toString());
+        return headerSlotsInUse;
+    }
+
+    private static void readPayload(ArrayList<Integer> header, DataInputStream dis, SlottedPage emptyPage, TupleDesc td) {
+        int numSlots = emptyPage.getNumSlots();
+        int headerSize = getHeaderSize(numSlots); // number of bits in headerByteArr
+        try {
+            for (int i = 0; i < headerSize*8; i++) {
+                throw new UnsupportedOperationException("FIX THE READING OF TUPLES!");
+//                if (header.get(i) == 1) {
+////                    parse tuple
+//                } else {
+////                    load td fields as null
+//                }
+            }
+        } catch (Exception e) {
+            throw new PageException(e);
+        }
+    }
 
     /**
      * Checks whether a slot in the header is used or not.  Optional helper method.
@@ -130,8 +223,12 @@ public class SlottedPageFormatter {
      * @return
      */
     private static boolean isSlotUsed(int i, byte[] header) {
-        throw new UnsupportedOperationException("implement me!");
+        int targetByte = i/8;
+        int adj_i = i%8;
+        int shiftAmt = 7 - adj_i;
+        return (header[targetByte] >> shiftAmt & 1)==1;
     }
+
 
     /**
      * Marks a slot in the header as used or not.  Optional helper method.
@@ -140,6 +237,23 @@ public class SlottedPageFormatter {
      * @param isUsed if true, slot should be set to 1; if false, set to 0
      */
     private static void markSlot(int i, byte[] header, boolean isUsed) {
-        throw new UnsupportedOperationException("implement me!");
+        int idx = getHeaderIndex(i);
+        if (isUsed) {
+            header[idx] = 1;
+        } else {
+            header[idx] = 0;
+        }
+    }
+
+    /**
+     * Calculate the true header index for given index i
+     * @param i slot index to find true index in header
+     * @return true index in header byte[]
+     */
+    private static int getHeaderIndex(int i) {
+        int blockStartidx = (i/8) * 8;
+        int blockEndIdx = blockStartidx + 7;
+        int idx = blockStartidx + (blockEndIdx - i);
+        return idx;
     }
 }
