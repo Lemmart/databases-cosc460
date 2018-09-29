@@ -3,6 +3,7 @@ package colgatedb.page;
 import colgatedb.tuple.Field;
 import colgatedb.tuple.Tuple;
 import colgatedb.tuple.TupleDesc;
+import colgatedb.tuple.Type;
 
 import javax.swing.plaf.synth.SynthTextAreaUI;
 import java.io.*;
@@ -96,11 +97,6 @@ public class SlottedPageFormatter {
             writeHeader(dos, page);
             writePayload(dos, page, td, pageSize);
 
-            // write out the page data to the DataOutputStream dos, starting with the header then the tuples
-            // see the Javadocs for DataOutputStream for handy methods
-            // to write out the data of a Field use the Field.serialize method
-            // also, you may find it the markSlot method very useful here
-
             return baos.toByteArray();
     }
 
@@ -139,6 +135,22 @@ public class SlottedPageFormatter {
                     dos.write(emptyTups);
                 }
             }
+
+//            int emptyBytesToAdd = ( (pageSize - pageCapacity*4) / td.getSize() ) * td.getSize();
+//            System.out.println("TD size: " + td.getSize() + " -------- PageSize: " + pageSize + " --------- PageCapacity*4: " + pageCapacity*4 + " -------- Computed j: " + emptyBytesToAdd);
+//            System.out.println("headerSize: " + getHeaderSize(page.getNumSlots()));
+//            if (emptyBytesToAdd > 0) {
+//                emptyBytesToAdd--;
+//            }
+//            if (td.getSize() == pageCapacity) {
+//                System.out.println("MADE IT");
+//                emptyBytesToAdd = 0;
+//            }
+
+//            (pageSize - (pageCapacity*4) - 1)
+//            for (int j = 0; j < emptyBytesToAdd; j++) {
+//                dos.write(0);
+//            }
         } catch (Exception e) {
             throw new PageException(e);
         }
@@ -159,10 +171,6 @@ public class SlottedPageFormatter {
             ArrayList<Integer> header = readHeader(dis, emptyPage);
             readPayload(header, dis, emptyPage, td);
 
-            // read in the data DataInputStream dis, first the header then the bytes of each tuple
-            // see the Javadocs for DataInputStream for handy methods
-            // to read the data associated with a Field in a tuple, use the Type.parse method
-            // also, you may find it the isSlotUsed method very useful here
             dis.close();
         } catch (IOException e) {
             throw new PageException(e);
@@ -191,35 +199,27 @@ public class SlottedPageFormatter {
         // read byte array to build record of header slots in use
         for (int i = 0; i < headerSize*8; i++) {
             if (isSlotUsed(i,headerByteArr)) {
-                headerSlotsInUse.add(i, 1);
+                headerSlotsInUse.set(getHeaderIndex(i), 1);
             }
         }
-
-//        System.out.println("MY ARRAYLIST: " + headerSlotsInUse.toString());
         return headerSlotsInUse;
     }
 
     private static void readPayload(ArrayList<Integer> header, DataInputStream dis, SlottedPage emptyPage, TupleDesc td) {
         int numSlots = emptyPage.getNumSlots();
-        int headerSize = getHeaderSize(numSlots); // number of bits in headerByteArr
-        int tupSize = td.getSize();
-
         try {
-            for (int i = 0; i < headerSize*8; i++) {
-                boolean isTup = header.get(i)==1;
-//
-                throw new UnsupportedOperationException("FIX THE READING OF TUPLES!");
-//
-//                Tuple t = new Tuple(td);
-//                for (int j = 0; j < td.getSize(); j++) {
-//                    Field f;
-//                    if (isTup) {
-//                        f = Field.parse(dis.readByte());
-//                    } else {
-//                        f = new Field(null);
-//                    }
-//                    t.setField(j,f);
-//                }
+            for (int i = 0; i < numSlots; i++) {
+                // if slot is used, parse tuple
+                if (header.get(i)==1) {
+                    Tuple t = new Tuple(td);
+                    for (int j = 0; j < td.numFields(); j++) {
+                        Field f = td.getFieldType(j).parse(dis);
+                        t.setField(j,f);
+                    }
+                    emptyPage.insertTuple(i,t);
+                } else {
+                    dis.skipBytes(td.getSize());
+                }
             }
         } catch (Exception e) {
             throw new PageException(e);
