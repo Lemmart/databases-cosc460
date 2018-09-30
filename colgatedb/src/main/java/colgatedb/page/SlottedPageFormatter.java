@@ -120,6 +120,7 @@ public class SlottedPageFormatter {
         }
     }
 
+
     private static void writePayload(DataOutputStream dos, SlottedPage page, TupleDesc td, int pageSize) {
         int pageCapacity = computePageCapacity(pageSize, td);
         try {
@@ -135,22 +136,9 @@ public class SlottedPageFormatter {
                     dos.write(emptyTups);
                 }
             }
-
-//            int emptyBytesToAdd = ( (pageSize - pageCapacity*4) / td.getSize() ) * td.getSize();
-//            System.out.println("TD size: " + td.getSize() + " -------- PageSize: " + pageSize + " --------- PageCapacity*4: " + pageCapacity*4 + " -------- Computed j: " + emptyBytesToAdd);
-//            System.out.println("headerSize: " + getHeaderSize(page.getNumSlots()));
-//            if (emptyBytesToAdd > 0) {
-//                emptyBytesToAdd--;
-//            }
-//            if (td.getSize() == pageCapacity) {
-//                System.out.println("MADE IT");
-//                emptyBytesToAdd = 0;
-//            }
-
-//            (pageSize - (pageCapacity*4) - 1)
-//            for (int j = 0; j < emptyBytesToAdd; j++) {
-//                dos.write(0);
-//            }
+            while (dos.size() < pageSize) {
+                dos.write(0);
+            }
         } catch (Exception e) {
             throw new PageException(e);
         }

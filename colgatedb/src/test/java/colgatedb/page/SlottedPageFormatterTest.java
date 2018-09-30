@@ -251,7 +251,6 @@ public class SlottedPageFormatterTest {
         testPage.insertTuple(tuple);
         byte[] pageData = testPage.getPageData();
 
-        System.out.println(testPage.getTuple(0).toString());
         SlottedPage pageFromBytes = new SlottedPage(pid, td, pageSize, pageData);
 
         assertEqualPages(testPage, pageFromBytes);
