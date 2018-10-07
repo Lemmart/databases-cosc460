@@ -1,14 +1,13 @@
 package colgatedb.dbfile;
 
+import colgatedb.BufferManager;
 import colgatedb.Database;
-import colgatedb.DbException;
 import colgatedb.page.*;
 import colgatedb.transactions.TransactionAbortedException;
 import colgatedb.transactions.TransactionId;
 import colgatedb.tuple.Tuple;
 import colgatedb.tuple.TupleDesc;
 
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
@@ -39,6 +38,12 @@ public class HeapFile implements DbFile {
 
     private final SlottedPageMaker pageMaker;   // this should be initialized in constructor
 
+    private TupleDesc td;
+    private int pageSize;
+    private int tableid;
+    private int numPages;
+    private int currentPage;
+
     /**
      * Creates a heap file.
      * @param td the schema for records stored in this heapfile
@@ -47,29 +52,45 @@ public class HeapFile implements DbFile {
      * @param numPages size of this heapfile (i.e., number of pages already stored on disk)
      */
     public HeapFile(TupleDesc td, int pageSize, int tableid, int numPages) {
-        throw new UnsupportedOperationException("implement me!");
+        this.td = td;
+        this.pageSize = pageSize;
+        this.tableid = tableid;
+        this.numPages = numPages;
+        pageMaker = new SlottedPageMaker(td, pageSize);
+
+        if (!(numPages > 0)) {
+            currentPage = -1;
+        }
     }
 
     /**
      * Returns the number of pages in this HeapFile.
      */
     public int numPages() {
-        throw new UnsupportedOperationException("implement me!");
+        return numPages;
     }
 
     @Override
     public int getId() {
-        throw new UnsupportedOperationException("implement me!");
+        return tableid;
     }
 
     @Override
     public TupleDesc getTupleDesc() {
-        throw new UnsupportedOperationException("implement me!");
+        return td;
     }
 
     @Override
     public void insertTuple(TransactionId tid, Tuple t) throws TransactionAbortedException {
-        throw new UnsupportedOperationException("implement me!");
+        BufferManager bm = Database.getBufferManager();
+        PageId pid = getFreePage(bm);
+        if (pid == null) {
+            SimplePageId newPid = new SimplePageId(tableid, currentPage);
+            bm.allocatePage(newPid);
+            bm.pinPage(newPid, pageMaker);
+        } else {
+            bm.pinPage(pid, pageMaker);
+        }
     }
 
 
@@ -81,6 +102,29 @@ public class HeapFile implements DbFile {
     @Override
     public DbFileIterator iterator(TransactionId tid) {
         return new HeapFileIterator(tid);
+    }
+
+    private PageId getFreePage(BufferManager bm) {
+        boolean isFree = false;
+        int initialCurrentPage = currentPage;
+        while (!isFree) {
+            SimplePageId pid = new SimplePageId(tableid, currentPage);
+            SlottedPage p = (SlottedPage)bm.getPage(pid);
+
+            if (p.getNumEmptySlots() > 0) {
+                int slotno = 0;
+                while (p.isSlotEmpty(slotno)) {
+
+                    slotno++;
+                }
+            }
+
+
+            currentPage++;
+            if (initialCurrentPage == currentPage) {
+                break;
+            }
+        }
     }
 
     /**

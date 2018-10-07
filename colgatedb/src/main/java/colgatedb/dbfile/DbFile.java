@@ -41,7 +41,7 @@ public interface DbFile {
      * @param tid The transaction performing the update
      * @param t   The tuple to add.  This tuple should be updated to reflect that
      *            it is now stored in this file.
-     * @throws DbException if the tuple cannot be added
+     * @throws DbException if the tuple cannot be added (if tupleDesc doesn't match other slottedPages)
      * @throws DiskManagerException if the needed file can't be read/written
      */
     void insertTuple(TransactionId tid, Tuple t) throws TransactionAbortedException;
