@@ -48,30 +48,30 @@ public class Filter extends Operator {
     }
 
     public Predicate getPredicate() {
-        return p;
+        return this.p;
     }
 
     @Override
     public void open() throws DbException, NoSuchElementException,
             TransactionAbortedException {
-        child.open();
-        open = true;
+        this.child.open();
+        this.open = true;
     }
 
     @Override
     public void close() {
-        open = false;
-        child.close();
+        this.open = false;
+        this.child.close();
     }
 
     @Override
     public void rewind() throws DbException, TransactionAbortedException {
-        child.rewind();
+        this.child.rewind();
     }
 
     @Override
     public boolean hasNext() throws DbException, TransactionAbortedException {
-        return open && child.hasNext();
+        return this.open && this.child.hasNext();
     }
 
     @Override
@@ -85,7 +85,7 @@ public class Filter extends Operator {
 
     @Override
     public DbIterator[] getChildren() {
-        return children;
+        return this.children;
     }
 
     @Override

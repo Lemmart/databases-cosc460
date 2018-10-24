@@ -98,11 +98,11 @@ public class SeqScan implements DbIterator {
      * @return Return the alias of the table this operator scans.
      */
     public String getAlias() {
-        return tableAlias;
+        return this.tableAlias;
     }
 
     public void open() throws DbException, TransactionAbortedException {
-        dbFileIterator.open();
+        this.dbFileIterator.open();
     }
 
     /**
@@ -115,24 +115,24 @@ public class SeqScan implements DbIterator {
      * prefixed with the tableAlias string from the constructor.
      */
     public TupleDesc getTupleDesc() {
-        return td;
+        return this.td;
     }
 
     public boolean hasNext() throws TransactionAbortedException, DbException {
-        return dbFileIterator.hasNext();
+        return this.dbFileIterator.hasNext();
     }
 
     public Tuple next() throws NoSuchElementException,
             TransactionAbortedException, DbException {
-        return dbFileIterator.next();
+        return this.dbFileIterator.next();
     }
 
     public void close() {
-        dbFileIterator.close();
+        this.dbFileIterator.close();
     }
 
     public void rewind() throws DbException, NoSuchElementException,
             TransactionAbortedException {
-        dbFileIterator.close();
+        this.dbFileIterator.close();
     }
 }
