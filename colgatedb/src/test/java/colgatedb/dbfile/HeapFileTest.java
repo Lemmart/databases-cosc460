@@ -112,9 +112,7 @@ public class HeapFileTest {
         assertNotNull(insertedTuple.getRecordId());
 
         assertEquals(1, hf.numPages());  // should still be one
-
         Database.getBufferManager().flushAllPages();  // persist changes to disk
-
         SlottedPage page = (SlottedPage) tempDM.readPage(pid, new SlottedPageMaker(td, Database.getPageSize()));
         Tuple foundTuple = page.iterator().next();
         assertEqualTuples(insertedTuple, foundTuple);
@@ -253,7 +251,6 @@ public class HeapFileTest {
         iterator.open();
         int tupleNo = 0;
         while (tupIter.hasNext()) {
-            System.out.println("tupleNo = " + tupleNo++);
             Tuple nextFromList = tupIter.next();
             assertTrue(iterator.hasNext());
             Tuple nextFromHF = iterator.next();

@@ -43,7 +43,6 @@ public class Tuple implements Serializable {
         for (int i = 0; i < TDObject.numFields(); i++) {
             FieldArrayList.add(null);
         }
-
     }
 
     /**
@@ -78,8 +77,6 @@ public class Tuple implements Serializable {
      * @throws NoSuchElementException if i is not a valid field reference.
      */
     public Field getField(int i) {
-        int size = FieldArrayList.size();
-
         if (i < 0 || i >= TDObject.numFields()) {
             throw new NoSuchElementException();
         } else if (FieldArrayList.get(i) == null) {

@@ -55,7 +55,7 @@ public class SlottedPage implements Page {
         this.pageSize = pageSize;
 
         tupleArrayList = new ArrayList<>();
-        for (int i = 0; i < pageSize; i++) {
+        for (int i = 0; i < getNumSlots(); i++) {
             tupleArrayList.add(null);
         }
 
@@ -109,12 +109,12 @@ public class SlottedPage implements Page {
     }
 
     /**
-     * @return the number of slots on this page that are empty.
+     * @return the number of slots on this page that are empty
      */
     public int getNumEmptySlots() {
         int numEmpty = 0;
-        for (Tuple tup: tupleArrayList) {
-            if (tup == null) {
+        for (int i = 0; i < tupleArrayList.size(); i++) {
+            if (isSlotEmpty(i)) {
                 numEmpty++;
             }
         }
@@ -187,21 +187,18 @@ public class SlottedPage implements Page {
      *                          slot is already empty.
      */
     public void deleteTuple(Tuple t) throws PageException {
-        boolean isValid = true;
-
         RecordId rid = t.getRecordId();
+
         if (rid != null) {
-            if (this.pid == rid.getPageId() && tupleArrayList.get(rid.tupleno()) != null) {
-                tupleArrayList.set(rid.tupleno(), null);
+            int idx = rid.tupleno();
+            PageId Tpid = rid.getPageId();
+            if (td.equals(t.getTupleDesc()) && idx < tupleArrayList.size() && idx > -1 && tupleArrayList.get(idx) != null && pid.equals(Tpid)) {
                 t.setRecordId(null);
+                tupleArrayList.set(rid.tupleno(), null);
             } else {
-                isValid = false;
+                throw new PageException("[Error] Failed to delete tuple " + t.toString());
             }
         } else {
-            isValid = false;
-        }
-
-        if (!isValid) {
             throw new PageException("[Error] Failed to delete tuple " + t.toString());
         }
     }

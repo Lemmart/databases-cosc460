@@ -76,7 +76,6 @@ public class HeapFileMoreTest {
     @GradedTest(number="10.3", max_score=1.0, visibility="visible")
     public void testRewind() throws IOException, TransactionAbortedException {
         List<Tuple> tups = new LinkedList<Tuple>();
-
         HeapFile hf = initializeHeapFile(tups);
         DbFileIterator iterator = hf.iterator(new TransactionId());
         iterator.open();
@@ -170,7 +169,6 @@ public class HeapFileMoreTest {
         Iterator<Tuple> tupIter = expectedTuples.iterator();
         int tupleNo = 0;
         while (tupIter.hasNext()) {
-            System.out.println("tupleNo = " + tupleNo++);
             Tuple nextFromList = tupIter.next();
             assertTrue(iterator.hasNext());
             Tuple nextFromHF = iterator.next();

@@ -169,7 +169,6 @@ public class BufferManagerTest {
         // because it has modifications that have not been flushed to disk yet!
         buffMgr.pinPage(pid0, pm);
         buffMgr.unpinPage(pid0, false);
-
         buffMgr.flushPage(pid0);
         assertEquals(10, dm.getDatum(pid0));
     }

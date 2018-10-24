@@ -6,8 +6,6 @@ import colgatedb.page.PageMaker;
 
 import java.util.ArrayList;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * ColgateDB
  * @author Michael Hay mhay@colgate.edu
@@ -45,7 +43,7 @@ public class BufferManagerImpl implements BufferManager {
 
     @Override
     public synchronized Page pinPage(PageId pid, PageMaker pageMaker) {
-        int pidIdx = getPageIndex(pid);
+        int pidIdx = getFrameIndex(pid);
         Frame f;
         Page p;
         if (pidIdx != -1) {
@@ -67,21 +65,21 @@ public class BufferManagerImpl implements BufferManager {
 
     @Override
     public synchronized void unpinPage(PageId pid, boolean isDirty) {
-        int pidIdx = getPageIndex(pid);
+        int pidIdx = getFrameIndex(pid);
         if (pidIdx == -1 || bufferPool.get(pidIdx).pinCount == 0) {
             throw new BufferManagerException("[ERROR] Unable to unpin page at index " + pidIdx + ".");
         }
         Frame f = bufferPool.get(pidIdx);
         f.pinCount--;
-        if (!f.isDirty) {
+        if (isDirty){
             f.isDirty = isDirty;
         }
     }
 
     @Override
     public synchronized void flushPage(PageId pid) {
-        int pidIdx = getPageIndex(pid);
-        if (pidIdx != -1 && bufferPool.get(pidIdx).isDirty) {
+        int pidIdx = getFrameIndex(pid);
+        if (pidIdx != -1 && bufferPool.get(pidIdx).isDirty && bufferPool.get(pidIdx).pinCount == 0) {
             dm.writePage(bufferPool.get(pidIdx).page);
             bufferPool.set(pidIdx, new Frame(null));
         }
@@ -108,21 +106,18 @@ public class BufferManagerImpl implements BufferManager {
 
     @Override
     public synchronized boolean isDirty(PageId pid) {
-        int pidIdx = getPageIndex(pid);
-        if (pidIdx > -1 && bufferPool.get(pidIdx).isDirty) {
-            return true;
-        }
-        return false;
+        int pidIdx = getFrameIndex(pid);
+        return pidIdx > -1 && bufferPool.get(pidIdx).isDirty;
     }
 
     @Override
     public synchronized boolean inBufferPool(PageId pid) {
-        return (getPageIndex(pid) > -1);
+        return (getFrameIndex(pid) > -1);
     }
 
     @Override
     public synchronized Page getPage(PageId pid) {
-        int pidIdx = getPageIndex(pid);
+        int pidIdx = getFrameIndex(pid);
         if (pidIdx > -1) {
             return bufferPool.get(pidIdx).page;
         }
@@ -131,13 +126,13 @@ public class BufferManagerImpl implements BufferManager {
 
     @Override
     public synchronized void discardPage(PageId pid) {
-        int pidIdx = getPageIndex(pid);
+        int pidIdx = getFrameIndex(pid);
         if (pidIdx > -1) {
             bufferPool.set(pidIdx, new Frame(null));
         }
     }
 
-    private int getPageIndex(PageId pid) {
+    private int getFrameIndex(PageId pid) {
         int idx = 0;
         for (Frame f : bufferPool) {
             if (f.page != null && f.page.getId().equals(pid)) {
@@ -159,38 +154,37 @@ public class BufferManagerImpl implements BufferManager {
         return -1;
     }
 
-    private int evictPage() {
-        int initialEvictionIdx = evictionIdx;
-        while (evictionIdx < bufferPool.size()) {
+    public int evictPage() {
+        int loops = 0;
+        int idx = -1;
+        while (idx == -1) {
             Frame f = bufferPool.get(evictionIdx);
-            if (allowEvictDirty && !f.recentlyUsed && f.pinCount == 0) {
-                evictionIdx++;
-                resetEvictionIdx();
-                break;
-            } else if (!allowEvictDirty && !f.isDirty && !f.recentlyUsed && f.pinCount == 0) {
-                evictionIdx++;
-                resetEvictionIdx();
-                break;
+            if (f.pinCount == 0) {
+                if (f.recentlyUsed) {
+                    f.recentlyUsed = false;
+                } else if (!f.isDirty) {
+                     idx = evictionIdx;
+                } else if (allowEvictDirty) {
+                    flushPage(f.page.getId());
+                    idx = evictionIdx;
+                }
             }
 
-            bufferPool.get(evictionIdx).recentlyUsed = false;
             evictionIdx++;
-
-            resetEvictionIdx();
-            if (initialEvictionIdx == evictionIdx) {
+            if (loops >= 2) {
                 throw new BufferManagerException("[ERROR] No available frames for eviction!");
             }
+            loops = resetEvictionIdx(loops);
         }
-        if (bufferPool.get(evictionIdx).isDirty) {
-            flushPage(bufferPool.get(evictionIdx).page.getId());
-        }
-        return evictionIdx;
+        return idx;
     }
 
-    private void resetEvictionIdx() {
+    private int resetEvictionIdx(int loops) {
         if (evictionIdx == bufferPool.size()) {
             evictionIdx = 0;
+            return (++loops);
         }
+        return loops;
     }
 
 

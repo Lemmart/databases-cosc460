@@ -84,7 +84,7 @@ public class DiskManagerImpl implements DiskManager {
         int numPages = getNumPages(pid.getTableId());
         if (pagenoRequested < numPages) {
             throw new DiskManagerException("Attempting to allocate a page that already exists!" +
-            " You requested that page " + pagenoRequested + " be allocated but file has " + numPages + "pages.");
+            "\n -> You requested that page " + pagenoRequested + " be allocated but it already exists within the " + numPages + " total pages.");
         } else if (pagenoRequested > numPages) {
             throw new DiskManagerException("Attempting to allocate pageno = " + pagenoRequested +
                     " but file currently has only " + numPages + " pages.");
