@@ -2,6 +2,7 @@ package colgatedb.operators;
 
 import colgatedb.Database;
 import colgatedb.DbException;
+import colgatedb.dbfile.HeapFile;
 import colgatedb.transactions.TransactionAbortedException;
 import colgatedb.transactions.TransactionId;
 import colgatedb.tuple.IntField;
@@ -32,6 +33,11 @@ import java.util.NoSuchElementException;
  */
 public class Insert extends Operator {
 
+    private TransactionId t;
+    private DbIterator child;
+    private int tableid;
+    private boolean isTemp;
+    private int numInserts;
 
     /**
      * Constructor.
@@ -44,7 +50,11 @@ public class Insert extends Operator {
      */
     public Insert(TransactionId t, DbIterator child, int tableid)
             throws DbException {
-        throw new UnsupportedOperationException("implement me!");
+        this.t = t;
+        this.child = child;
+        this.tableid = tableid;
+        isTemp = true;
+        numInserts = 0;
     }
 
     /**
@@ -52,22 +62,24 @@ public class Insert extends Operator {
      */
     @Override
     public TupleDesc getTupleDesc() {
-        throw new UnsupportedOperationException("implement me!");
+        Type[] type = {Type.INT_TYPE};
+        String[] ct = {"count"};
+        return new TupleDesc(type,ct);
     }
 
     @Override
     public void open() throws DbException, TransactionAbortedException {
-        throw new UnsupportedOperationException("implement me!");
+        child.open();
     }
 
     @Override
     public void close() {
-        throw new UnsupportedOperationException("implement me!");
+        child.close();
     }
 
     @Override
     public void rewind() throws DbException, TransactionAbortedException {
-        throw new UnsupportedOperationException("implement me!");
+        child.rewind();
     }
 
     /**
@@ -78,7 +90,7 @@ public class Insert extends Operator {
      */
     @Override
     public boolean hasNext() throws DbException, TransactionAbortedException {
-        throw new UnsupportedOperationException("implement me!");
+        return child.hasNext() || isTemp;
     }
 
     /**
@@ -95,17 +107,17 @@ public class Insert extends Operator {
     @Override
     public Tuple next() throws DbException, TransactionAbortedException,
             NoSuchElementException {
-        throw new UnsupportedOperationException("implement me!");
+        throw new UnsupportedOperationException("Implement me!");
     }
 
     @Override
     public DbIterator[] getChildren() {
-        throw new UnsupportedOperationException("implement me!");
+        return new DbIterator[]{child};
     }
 
     @Override
     public void setChildren(DbIterator[] children) {
-        throw new UnsupportedOperationException("implement me!");
+        child = children[0];
     }
 }
 

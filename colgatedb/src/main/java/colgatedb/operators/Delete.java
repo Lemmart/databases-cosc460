@@ -32,6 +32,8 @@ import java.util.NoSuchElementException;
  */
 public class Delete extends Operator {
 
+    private TransactionId t;
+    private DbIterator child;
 
     /**
      * Constructor specifying the transaction that this delete belongs to as
@@ -41,7 +43,8 @@ public class Delete extends Operator {
      * @param child The child operator from which to read tuples for deletion
      */
     public Delete(TransactionId t, DbIterator child) {
-        throw new UnsupportedOperationException("implement me!");
+        this.t = t;
+        this.child = child;
     }
 
     /**
@@ -49,22 +52,24 @@ public class Delete extends Operator {
      */
     @Override
     public TupleDesc getTupleDesc() {
-        throw new UnsupportedOperationException("implement me!");
+        Type[] type = {Type.INT_TYPE};
+        String[] ct = {"count"};
+        return new TupleDesc(type,ct);
     }
 
     @Override
     public void open() throws DbException, TransactionAbortedException {
-        throw new UnsupportedOperationException("implement me!");
+        child.open();
     }
 
     @Override
     public void close() {
-        throw new UnsupportedOperationException("implement me!");
+        child.close();
     }
 
     @Override
     public void rewind() throws DbException, TransactionAbortedException {
-        throw new UnsupportedOperationException("implement me!");
+        child.rewind();
     }
 
     /**
@@ -75,7 +80,7 @@ public class Delete extends Operator {
      */
     @Override
     public boolean hasNext() throws DbException, TransactionAbortedException {
-        throw new UnsupportedOperationException("implement me!");
+        return child.hasNext();
     }
 
     /**
@@ -95,12 +100,11 @@ public class Delete extends Operator {
 
     @Override
     public DbIterator[] getChildren() {
-        throw new UnsupportedOperationException("implement me!");
+        return new DbIterator[]{child};
     }
 
     @Override
     public void setChildren(DbIterator[] children) {
-        throw new UnsupportedOperationException("implement me!");
+        child = children[0];
     }
-
 }

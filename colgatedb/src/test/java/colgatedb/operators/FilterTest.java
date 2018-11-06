@@ -105,6 +105,7 @@ public class FilterTest {
         Predicate pred = new Predicate(0, Op.EQUALS, OperatorTestUtility.getField(0));
         Filter op = new Filter(pred, scan);
         op.open();
+
         assertTrue(op.hasNext());
         assertNotNull(op.next());
         assertTrue(OperatorTestUtility.checkExhausted(op));

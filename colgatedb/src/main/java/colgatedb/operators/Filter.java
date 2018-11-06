@@ -3,6 +3,7 @@ package colgatedb.operators;
 import colgatedb.DbException;
 import colgatedb.transactions.TransactionAbortedException;
 import colgatedb.tuple.Tuple;
+import colgatedb.tuple.TupleDesc;
 
 import java.util.NoSuchElementException;
 
@@ -30,6 +31,7 @@ public class Filter extends Operator {
     private DbIterator child;
     private DbIterator[] children;
     private boolean open;
+    private Tuple nextTuple;
 
 
     /**
@@ -52,6 +54,11 @@ public class Filter extends Operator {
     }
 
     @Override
+    public TupleDesc getTupleDesc() {
+        return this.child.getTupleDesc();
+    }
+
+    @Override
     public void open() throws DbException, NoSuchElementException,
             TransactionAbortedException {
         this.child.open();
@@ -71,7 +78,17 @@ public class Filter extends Operator {
 
     @Override
     public boolean hasNext() throws DbException, TransactionAbortedException {
-        return this.open && this.child.hasNext();
+        if (nextTuple != null) {
+            return true;
+        }
+        while (this.open && this.child.hasNext()) {
+            Tuple t = this.child.next();
+            if (this.p.filter(t)) {
+                nextTuple = t;
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -80,8 +97,13 @@ public class Filter extends Operator {
         if (!hasNext()) {
             throw new NoSuchElementException("no more tuples!");
         }
-        throw new UnsupportedOperationException("implement me!");
+        Tuple temp = nextTuple;
+        nextTuple = null;
+        return temp;
+
+
     }
+
 
     @Override
     public DbIterator[] getChildren() {
@@ -90,7 +112,11 @@ public class Filter extends Operator {
 
     @Override
     public void setChildren(DbIterator[] children) {
+        if (children.length != 1) {
+            throw new DbException("Expected only one child!");
+        }
         this.children = children;
+        this.child = children[0];
     }
 
 }

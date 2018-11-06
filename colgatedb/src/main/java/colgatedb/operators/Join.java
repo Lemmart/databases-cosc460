@@ -27,6 +27,14 @@ import java.util.NoSuchElementException;
  */
 public class Join extends Operator {
 
+    private JoinPredicate p;
+    private DbIterator child1;
+    private DbIterator child2;
+    private Tuple tuple1;
+    private Tuple tuple2;
+    private boolean open;
+    private TupleDesc td;
+    private Tuple mergedTup;
 
     /**
      * Constructor. Accepts to children to join and the predicate to join them
@@ -37,32 +45,77 @@ public class Join extends Operator {
      * @param child2 Iterator for the right(inner) relation to join
      */
     public Join(JoinPredicate p, DbIterator child1, DbIterator child2) {
-        throw new UnsupportedOperationException("implement me!");
+        this.p = p;
+        this.child1 = child1;
+        this.child2 = child2;
+        this.td = TupleDesc.merge(child1.getTupleDesc(),child2.getTupleDesc());
+        setTupleDesc(td);
     }
 
     public JoinPredicate getJoinPredicate() {
-        throw new UnsupportedOperationException("implement me!");
+        return p;
+    }
+
+    @Override
+    public TupleDesc getTupleDesc() {
+        return td;
     }
 
     @Override
     public void open() throws DbException, NoSuchElementException,
             TransactionAbortedException {
-        throw new UnsupportedOperationException("implement me!");
+        child1.open();
+        child2.open();
+        open = true;
     }
 
     @Override
     public void close() {
-        throw new UnsupportedOperationException("implement me!");
+        child1.close();
+        child2.close();
+        open = false;
     }
 
     @Override
     public void rewind() throws DbException, TransactionAbortedException {
-        throw new UnsupportedOperationException("implement me!");
+        if (!open) {
+            throw new DbException("[ERROR] Unable to rewind: Not open!");
+        }
+        child1.rewind();
+        child2.rewind();
     }
 
     @Override
     public boolean hasNext() throws DbException, TransactionAbortedException {
-        throw new UnsupportedOperationException("implement me!");
+        if (mergedTup != null && open) {
+            return true;
+        }
+
+        while (child1.hasNext() || tuple1 != null) {
+            if (tuple1 == null) {
+                tuple1 = child1.next();
+                child2.rewind();
+            }
+            while (child2.hasNext()) {
+                tuple2 = child2.next();
+                if (p.filter(tuple1,tuple2)) {
+                    mergedTup = new Tuple(td);
+                    int tupIdx = 0;
+                    for (int i = 0; i < tuple1.getTupleDesc().numFields(); i++) {
+                        mergedTup.setField(tupIdx, tuple1.getField(i));
+                        tupIdx++;
+                    }
+                    for (int i = 0; i < tuple2.getTupleDesc().numFields(); i++) {
+                        mergedTup.setField(tupIdx, tuple2.getField(i));
+                        tupIdx++;
+                    }
+                    return true;
+                }
+            }
+            child2.rewind();
+            tuple1 = null;
+        }
+        return false;
     }
 
     /**
@@ -85,17 +138,26 @@ public class Join extends Operator {
     @Override
     public Tuple next() throws DbException, TransactionAbortedException,
             NoSuchElementException {
-        throw new UnsupportedOperationException("implement me!");
+        if (!hasNext()) {
+            throw new NoSuchElementException("No more tuples!");
+        }
+        Tuple t = mergedTup;
+        mergedTup = null;
+        return t;
     }
 
     @Override
     public DbIterator[] getChildren() {
-        throw new UnsupportedOperationException("implement me!");
+        return new DbIterator[]{this.child1,this.child2};
     }
 
     @Override
-    public void setChildren(DbIterator[] children) {
-        throw new UnsupportedOperationException("implement me!");
+    public void setChildren(DbIterator[] children) throws DbException {
+        if (children.length != 2) {
+            throw new DbException("[ERROR] Join.java: Failed to set children with array of length " + children.length);
+        }
+        this.child1 = children[0];
+        this.child2 = children[1];
     }
 
 }

@@ -68,15 +68,8 @@ public class SeqScan implements DbIterator {
         int numFields = tdTemp.numFields();
         Type [] types = new Type[numFields];
         String [] fieldNames = new String[numFields];
-//        if (tableAlias == "") {
-//            tableAlias = "null";
-//        }
+
         for (int i = 0; i < numFields; i++) {
-//            if (tdTemp.getFieldName(i) == "") {
-//                fieldNames[i] = tableAlias + '.' + "null";
-//            } else {
-//                fieldNames[i] = tableAlias + '.' + tdTemp.getFieldName(i);
-//            }
             fieldNames[i] = tableAlias + '.' + tdTemp.getFieldName(i);
         }
         td = new TupleDesc(types,fieldNames);
