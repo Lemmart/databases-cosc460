@@ -3,6 +3,7 @@ package colgatedb.transactions;
 import colgatedb.page.PageId;
 
 import java.util.*;
+import java.util.concurrent.locks.Lock;
 
 /**
  * ColgateDB
@@ -20,33 +21,93 @@ import java.util.*;
  */
 public class LockManagerImpl implements LockManager {
 
+    private ArrayList<LockTableEntry> lockTableEntries;
 
     public LockManagerImpl() {
-        throw new UnsupportedOperationException("implement me!");
+        lockTableEntries = new ArrayList<>();
     }
 
     @Override
     public void acquireLock(TransactionId tid, PageId pid, Permissions perm) throws TransactionAbortedException {
-        throw new UnsupportedOperationException("implement me!");
+        LockTableEntry e = getEntry(pid);
+        synchronized (this) {
+            e.addEntry(tid, perm);
+        }
+
+//        busy wait for lock
+        while (true) {
+            boolean exceededTicks;
+            boolean holds;
+            synchronized (this) {
+                exceededTicks = e.processLock(tid);
+                holds = holdsLock(tid, pid, perm);
+//                deadlock detected!
+                if (exceededTicks) {
+                    e.cleanUpDeadlock(tid, perm);
+                    throw new TransactionAbortedException();
+                }
+//            successfully acquired lock!
+                else if (holds) {
+                    break;
+                }
+            }
+
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException x) {}
+        }
     }
 
     @Override
-    public synchronized boolean holdsLock(TransactionId tid, PageId pid, Permissions perm) {
-        throw new UnsupportedOperationException("implement me!");
+    public boolean holdsLock(TransactionId tid, PageId pid, Permissions perm) {
+        for (LockTableEntry e : lockTableEntries) {
+            if (e.holdsLock(tid,pid, perm)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
-    public synchronized void releaseLock(TransactionId tid, PageId pid) {
-        throw new UnsupportedOperationException("implement me!");
+    public void releaseLock(TransactionId tid, PageId pid) {
+        for (LockTableEntry e : lockTableEntries) {
+            if (e.equalsPid(pid) && e.getTids().contains(tid)) {
+                e.releaseLock(tid);
+                return;
+            }
+        }
+        throw new LockManagerException("[ERROR] Failed to release lock. Transaction ID " + tid.toString() + " not found.");
     }
 
     @Override
     public synchronized List<PageId> getPagesForTid(TransactionId tid) {
-        throw new UnsupportedOperationException("implement me!");
+        ArrayList<PageId> pids = new ArrayList<>();
+        for (LockTableEntry e : lockTableEntries) {
+            if (e.getTids().contains(tid)) {
+                pids.add(e.getPid());
+            }
+        }
+        return pids;
     }
 
     @Override
     public synchronized List<TransactionId> getTidsForPage(PageId pid) {
-        throw new UnsupportedOperationException("implement me!");
+        for (LockTableEntry e : lockTableEntries) {
+            if (e.equalsPid(pid)) {
+                return e.getTids();
+            }
+        }
+        throw new NullPointerException();
+    }
+
+    private synchronized LockTableEntry getEntry(PageId pid) {
+        for (LockTableEntry e : lockTableEntries) {
+            if (e.equalsPid(pid)) {
+                return e;
+            }
+        }
+        LockTableEntry p = new LockTableEntry(pid);
+        lockTableEntries.add(p);
+        return p;
     }
 }

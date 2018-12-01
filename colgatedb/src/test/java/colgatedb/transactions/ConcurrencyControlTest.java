@@ -78,7 +78,6 @@ public class ConcurrencyControlTest {
         public void increment(String name) {
             int currCount = count;  // read
             // introduce a delay between read and write to "encourage" race conditions
-            System.out.println("Shared counter incremented by " + name + ".");
             count = currCount + 1;  // write
         }
 

@@ -107,7 +107,7 @@ public class Insert extends Operator {
     @Override
     public Tuple next() throws DbException, TransactionAbortedException,
             NoSuchElementException {
-        throw new UnsupportedOperationException("Implement me!");
+        throw new UnsupportedOperationException("implement me!");
     }
 
     @Override

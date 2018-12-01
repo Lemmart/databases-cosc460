@@ -1,6 +1,12 @@
 package colgatedb.transactions;
 
+import colgatedb.page.PageId;
+
+import javax.sound.midi.SysexMessage;
+import java.lang.reflect.Array;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.locks.Lock;
 
 /**
  * ColgateDB
@@ -22,19 +28,96 @@ import java.util.*;
  */
 public class LockTableEntry {
 
-    // some suggested private instance variables; feel free to modify
     private Permissions lockType;             // null if no one currently has a lock
     private Set<TransactionId> lockHolders;   // a set of txns currently holding a lock on this page
-    private List<LockRequest> requests;       // a queue of outstanding requests
+    private ArrayList<LockRequest> requests;       // a queue of outstanding requests
+    private PageId pid;
+    private int tickCount;
 
     public LockTableEntry() {
         lockType = null;
         lockHolders = new HashSet<>();
-        requests = new LinkedList<>();
-        // you may wish to add statements here.
+        requests = new ArrayList<>();
+        pid = null;
+        tickCount = 0;
     }
 
-    // you may wish to implement methods here.
+    public LockTableEntry(PageId pid) {
+        this();
+        this.pid = pid;
+    }
+
+    public void addEntry(TransactionId tid, Permissions perm) {
+        if (holdsLock(tid, this.pid, perm)) {
+            return;
+        }
+        if (lockHolders.contains(tid) && perm.permLevel == 1) {
+            requests.add(0, new LockRequest(tid, perm));
+        } else {
+            requests.add(new LockRequest(tid, perm));
+        }
+    }
+
+    public boolean processLock(TransactionId tid) {
+        LockRequest r = requests.get(0);
+        if (tid.equals(r.tid)) {
+//            allow first thread to grab lock
+            if (lockType == null || lockHolders.isEmpty() || (lockType.permLevel == r.perm.permLevel && lockType.permLevel == 0)) {
+                lockType = r.perm;
+                lockHolders.add(requests.remove(0).tid);
+                tickCount = 0;
+            }
+//                upgrade currently held lock
+            else if (lockHolders.size() == 1 && lockHolders.contains(r.tid) && (lockType.permLevel > 0 || r.perm.permLevel > 0)) {
+                lockType = Permissions.READ_WRITE;
+                lockHolders.add(requests.remove(0).tid);
+                tickCount = 0;
+            }
+            tickCount++;
+        }
+        return tickCount > ThreadLocalRandom.current().nextInt(1000,1500);
+    }
+
+    public boolean holdsLock(TransactionId tid, PageId pid, Permissions perm) {
+        return lockType != null && lockHolders.contains(tid) && this.pid.equals(pid) && perm.permLevel <= lockType.permLevel;
+    }
+
+    public void cleanUpDeadlock(TransactionId tid, Permissions perm) {
+        if (requests.size() > 0 && requests.get(0).tid.equals(tid) && requests.get(0).perm.permLevel == perm.permLevel) {
+            requests.remove(0);
+        }
+    }
+
+    public boolean releaseLock(TransactionId tid) {
+        if (!lockHolders.contains(tid)) return false;
+
+        lockHolders.remove(tid);
+        if (lockHolders.isEmpty()) {
+            lockType = null;
+        }
+        return true;
+    }
+
+    public boolean contains(PageId pid, TransactionId tid, Permissions perm) {
+        for (LockRequest r : requests) {
+            if (r.tid.equals(tid) && lockType.equals(perm)) {
+                return this.pid.equals(pid);
+            }
+        }
+        return this.pid.equals(pid) && lockHolders.contains(tid);
+    }
+
+    public boolean equalsPid(PageId pid) {
+        return this.pid.equals(pid);
+    }
+
+    public List<TransactionId> getTids() {
+        return new ArrayList<>(lockHolders);
+    }
+
+    public PageId getPid() {
+        return pid;
+    }
 
     /**
      * A class representing a single lock request.  Simply tracks the txn and the desired lock type.

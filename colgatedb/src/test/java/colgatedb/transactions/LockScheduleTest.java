@@ -5,6 +5,8 @@ import com.gradescope.jh61b.grader.GradedTest;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.sound.midi.SysexMessage;
+
 import static org.junit.Assert.*;
 
 /**
@@ -72,6 +74,92 @@ public class LockScheduleTest {
     }
 
     // write three unit tests here
+
+    /**
+     * Unit test 1
+     * T1 is holding the lock and requests it again despite T2 waiting
+     * Simulates repeated modification requests on same page
+     */
+    @Test
+    @GradedTest(number="19.3", max_score=1.0, visibility="visible")
+    public void duplicateRequestBySameTid() {
+        steps = new Schedule.Step[]{
+                new Schedule.Step(tid0, pid1, Schedule.Action.EXCLUSIVE),   // t1 requests exclusive
+                new Schedule.Step(tid0, pid1, Schedule.Action.ACQUIRED),
+                new Schedule.Step(tid1, pid1, Schedule.Action.EXCLUSIVE),   // t2 waiting for exclusive
+                new Schedule.Step(tid0, pid1, Schedule.Action.EXCLUSIVE),   // t1 requests exclusive, should already have it
+                new Schedule.Step(tid0, pid1, Schedule.Action.UNLOCK),
+                new Schedule.Step(tid1, pid1, Schedule.Action.ACQUIRED)     // now t2 can get exclusive
+        };
+        executeSchedule();
+    }
+
+    /**
+     * Unit test 2
+     * interleave requests for shared lock to ensure that all threads can simultaneously hold the lock
+     */
+    @Test
+    @GradedTest(number="19.4", max_score=1.0, visibility="visible")
+    public void allowMultipleShared() {
+        steps = new Schedule.Step[]{
+                new Schedule.Step(tid0, pid1, Schedule.Action.SHARED),      // t1 requests shared
+                new Schedule.Step(tid0, pid1, Schedule.Action.ACQUIRED),
+                new Schedule.Step(tid1, pid1, Schedule.Action.SHARED),      // t2 requests shared
+                new Schedule.Step(tid1, pid1, Schedule.Action.ACQUIRED),
+                new Schedule.Step(tid2, pid1, Schedule.Action.SHARED),      // t3 requests shared
+                new Schedule.Step(tid2, pid1, Schedule.Action.ACQUIRED),
+                new Schedule.Step(tid0, pid1, Schedule.Action.UNLOCK),
+                new Schedule.Step(tid1, pid1, Schedule.Action.UNLOCK)
+        };
+        executeSchedule();
+    }
+
+    /**
+     * Unit test 3
+     * Acquire locks on multiple pages using same transaction ID
+     */
+    @Test
+    @GradedTest(number="19.5", max_score=1.0, visibility="visible")
+    public void singleTidMultiplePages() {
+        steps = new Schedule.Step[]{
+                new Schedule.Step(tid0, pid1, Schedule.Action.EXCLUSIVE),
+                new Schedule.Step(tid0, pid1, Schedule.Action.ACQUIRED),   // acquire lock on page 1
+                new Schedule.Step(tid0, pid2, Schedule.Action.EXCLUSIVE),
+                new Schedule.Step(tid0, pid2, Schedule.Action.ACQUIRED),   // acquire lock on page 2
+                new Schedule.Step(tid0, pid3, Schedule.Action.SHARED),
+                new Schedule.Step(tid0, pid3, Schedule.Action.ACQUIRED),   // acquire lock on page 3
+                new Schedule.Step(tid0, pid1, Schedule.Action.UNLOCK),
+                new Schedule.Step(tid0, pid2, Schedule.Action.UNLOCK),
+                new Schedule.Step(tid0, pid3, Schedule.Action.UNLOCK)
+        };
+        executeSchedule();
+    }
+
+    /**
+     * Unit test 4
+     * Acquire locks on multiple pages using multiple transaction ID's
+     * Ensure that t3 waits on t2 before acquiring the lock and then subsequently releasing it
+     */
+    @Test
+    @GradedTest(number="19.6", max_score=1.0, visibility="visible")
+    public void multipleTidsMultiplePages() {
+        steps = new Schedule.Step[]{
+
+                new Schedule.Step(tid0, pid1, Schedule.Action.EXCLUSIVE),
+                new Schedule.Step(tid0, pid1, Schedule.Action.ACQUIRED),   // t1 acquire lock on page 1
+
+                new Schedule.Step(tid1, pid2, Schedule.Action.EXCLUSIVE),
+                new Schedule.Step(tid1, pid2, Schedule.Action.ACQUIRED),   // t2 acquire lock on page 2
+
+                new Schedule.Step(tid3, pid2, Schedule.Action.EXCLUSIVE),
+
+                new Schedule.Step(tid0, pid1, Schedule.Action.UNLOCK),
+                new Schedule.Step(tid1, pid2, Schedule.Action.UNLOCK),
+                new Schedule.Step(tid3, pid2, Schedule.Action.ACQUIRED),   // t3 requests lock on page 2
+                new Schedule.Step(tid3, pid2, Schedule.Action.UNLOCK)
+        };
+        executeSchedule();
+    }
 
     private void executeSchedule() {
         try {
