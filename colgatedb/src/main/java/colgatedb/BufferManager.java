@@ -108,15 +108,4 @@ public interface BufferManager {
      * @param pid pid of desired page
      */
     void discardPage(PageId pid);
-
-    /**
-     * Implements a clock replacement scheme using the global tracking variable evictionIdx. It
-     * iterates frame by frame through the buffer pool, pulling one frame into memory at a time.
-     * This implementation is highly efficient (potenially O(1) )in that successive calls will
-     * cause the method to immediately jump to the evictionIdx index in the buffer pool, removing
-     * a potentially long search through frames that have not changed/emptied since the previous
-     * search. Thus in the worst case, it operates in O(n) time whereas in the best case (multiple
-     * free slots on the same page), it operates in O(1) time. Rather than
-     */
-    int evictPage();
 }

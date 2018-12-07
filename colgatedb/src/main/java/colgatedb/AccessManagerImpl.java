@@ -3,12 +3,10 @@ package colgatedb;
 import colgatedb.page.Page;
 import colgatedb.page.PageId;
 import colgatedb.page.PageMaker;
+import colgatedb.page.SimplePageId;
 import colgatedb.transactions.*;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * ColgateDB
@@ -28,43 +26,59 @@ import java.util.Map;
 public class AccessManagerImpl implements AccessManager {
 
     private boolean force = true;  // indicates whether force policy should be used
+    private BufferManager bm;
+    private LockManagerImpl lm;
+    private Map<PageId, ArrayList<TransactionId>> pinnedPages;
+    private Map<TransactionId, ArrayList<PageId>> tidsWithPages;
 
     /**
      * Initialize the AccessManager, which includes creating a new LockManager.
      * @param bm buffer manager through which all page requests should be made
      */
     public AccessManagerImpl(BufferManager bm) {
-        throw new UnsupportedOperationException("implement me!");
+        this.bm = bm;
+        lm = new LockManagerImpl();
+        pinnedPages = new HashMap<>();
+        tidsWithPages = new HashMap<>();
+        bm.evictDirty(false);
     }
 
     @Override
     public void acquireLock(TransactionId tid, PageId pid, Permissions perm) throws TransactionAbortedException {
-        throw new UnsupportedOperationException("implement me!");
+        lm.acquireLock(tid, pid, perm);
     }
 
     @Override
     public boolean holdsLock(TransactionId tid, PageId pid, Permissions perm) {
-        throw new UnsupportedOperationException("implement me!");
+        return lm.holdsLock(tid, pid, perm);
     }
 
     @Override
     public void releaseLock(TransactionId tid, PageId pid) {
-        throw new UnsupportedOperationException("implement me!");
+        lm.releaseLock(tid, pid);
     }
 
     @Override
-    public Page pinPage(TransactionId tid, PageId pid, PageMaker pageMaker) {
-        throw new UnsupportedOperationException("implement me!");
+    public synchronized Page pinPage(TransactionId tid, PageId pid, PageMaker pageMaker) {
+        if (!pinnedPages.containsKey(pid)) {
+            pinnedPages.put(pid, new ArrayList<>());
+            tidsWithPages.put(tid, new ArrayList<>());
+        }
+        pinnedPages.get(pid).add(tid);
+        tidsWithPages.get(tid).add(pid);
+        return bm.pinPage(pid, pageMaker);
     }
 
     @Override
-    public void unpinPage(TransactionId tid, Page page, boolean isDirty) {
-        throw new UnsupportedOperationException("implement me!");
+    public synchronized void unpinPage(TransactionId tid, Page page, boolean isDirty) {
+        PageId pid = page.getId();
+        pinnedPages.get(new SimplePageId(pid.getTableId(),pid.pageNumber())).remove(tid);
+        bm.unpinPage(pid, isDirty);
     }
 
     @Override
-    public void allocatePage(PageId pid) {
-        throw new UnsupportedOperationException("implement me!");
+    public synchronized void allocatePage(PageId pid) {
+        bm.allocatePage(pid);
     }
 
     @Override
@@ -74,6 +88,14 @@ public class AccessManagerImpl implements AccessManager {
 
     @Override
     public void transactionComplete(TransactionId tid, boolean commit) {
+        if (commit) {
+            if (force) {
+                throw new UnsupportedOperationException("implement me!");
+            }
+            return;
+        }
+//        aborting
+        bm.flushAllPages();
         throw new UnsupportedOperationException("implement me!");
     }
 
