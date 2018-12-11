@@ -102,6 +102,7 @@ public class AccessManagerImpl implements AccessManager {
     @Override
     public void setForce(boolean force) {
         // you do NOT need to implement this for lab10.  this will be changed in a later lab.
-        throw new UnsupportedOperationException("implement me!");
+        // throw new UnsupportedOperationException("implement me!");
+        this.force = force;
     }
 }
