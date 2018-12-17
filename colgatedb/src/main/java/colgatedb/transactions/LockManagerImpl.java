@@ -29,6 +29,10 @@ public class LockManagerImpl implements LockManager {
 
     @Override
     public void acquireLock(TransactionId tid, PageId pid, Permissions perm) throws TransactionAbortedException {
+        System.out.println("LMI: added holdsLock check to acquireLock method - please remove me if not applicable!");
+        if (holdsLock(tid, pid, perm)) {
+            return;
+        }
         LockTableEntry e = getEntry(pid);
         synchronized (this) {
             e.addEntry(tid, perm);

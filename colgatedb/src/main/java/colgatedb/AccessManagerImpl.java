@@ -6,6 +6,7 @@ import colgatedb.page.PageMaker;
 import colgatedb.page.SimplePageId;
 import colgatedb.transactions.*;
 
+import javax.sound.midi.SysexMessage;
 import java.util.*;
 
 /**
@@ -71,9 +72,8 @@ public class AccessManagerImpl implements AccessManager {
 
     @Override
     public synchronized void unpinPage(TransactionId tid, Page page, boolean isDirty) {
-        PageId pid = page.getId();
-        pinnedPages.get(new SimplePageId(pid.getTableId(),pid.pageNumber())).remove(tid);
-        bm.unpinPage(pid, isDirty);
+        pinnedPages.get(page.getId()).remove(tid);
+        bm.unpinPage(page.getId(), isDirty);
     }
 
     @Override
@@ -82,27 +82,39 @@ public class AccessManagerImpl implements AccessManager {
     }
 
     @Override
-    public void transactionComplete(TransactionId tid) {
+    public synchronized void transactionComplete(TransactionId tid) {
         transactionComplete(tid, true);
     }
 
     @Override
-    public void transactionComplete(TransactionId tid, boolean commit) {
-        if (commit) {
-            if (force) {
-                throw new UnsupportedOperationException("implement me!");
+    public synchronized void transactionComplete(TransactionId tid, boolean commit) {
+        ArrayList<PageId> pids = tidsWithPages.get(tid);
+        System.out.println("AMI: size: " + pids.size());
+        for (PageId pid : pids) {
+            System.out.println("AMI: pid is " + pid.toString());
+            if (bm.isDirty(pid)) {
+                System.out.println("AMI: pid is dirty. commit && force: " + (commit && force));
+                if (commit && force) {
+                    System.out.println("AMI: ...flushing");
+                    bm.flushPage(pid);
+                } else {
+                    bm.unpinPage(pid, true);
+                    bm.discardPage(pid);
+                }
+            } else {
+                bm.unpinPage(pid, false);
             }
-            return;
+            System.out.println("AMI: tidsWithPages.size()=" + tidsWithPages.size() + " --- pinnedPages.size()="+pinnedPages.size());
+            tidsWithPages.get(tid).remove(pid);
+            pinnedPages.get(pid).remove(tid);
+            lm.releaseLock(tid, pid);
         }
-//        aborting
-        bm.flushAllPages();
-        throw new UnsupportedOperationException("implement me!");
     }
 
     @Override
     public void setForce(boolean force) {
         // you do NOT need to implement this for lab10.  this will be changed in a later lab.
-        // throw new UnsupportedOperationException("implement me!");
+//         throw new UnsupportedOperationException("implement me!");
         this.force = force;
     }
 }
